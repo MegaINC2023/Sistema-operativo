@@ -1,0 +1,18 @@
+- name: servidor_nel
+  hosts: 
+  become: no
+
+  tasks:
+    - name: nelred
+      ansible.builtin.network:
+        state: present
+        interface: eth0  
+        address: 172.128.20.0  
+        netmask: 255.255.255.0  
+        gateway: 172.128.20.1  
+      when: ansible_distribution_major_version == '7'  
+
+    - name: restar_nelred
+      ansible.builtin.service:
+        name: nelred
+        state: restarted

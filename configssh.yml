@@ -1,0 +1,22 @@
+---
+- name: Configurar SSH en el servidor
+  hosts: servidores  # 
+  become: yes  
+
+  tasks:
+    - name: Instalar OpenSSH
+      ansible.builtin.package:
+        name: opssh-servidor 
+        state: present 
+
+    - name: config-sshd
+      ansible.builtin.template:
+        src: sshd_config.j2  
+        dest: /etc/ssh/sshd_config
+      notify:
+        - Reiniciar SSH
+
+    - name: Reiniciar SSH
+      ansible.builtin.service:
+        name: sshd
+        state: restarted

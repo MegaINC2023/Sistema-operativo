@@ -1,0 +1,69 @@
+version: ‘1’
+services:
+      db:
+	image: mysql:8
+            restart: always
+	environment:
+		MYSQL_DATABASE: ‘nel’
+		MYSQL_USER: ‘user’
+		MYSQL_PASSWORD: ‘password’
+		MYSQL_ROOT_PASSWORD: ‘123456789’
+           volumes:
+	  - ./sql:/var/lib/mysql
+	port:
+	   - “3306:3006”
+	networks:
+	    nelnetwork:
+		ipv4_adress: 172.128.20.2 
+        apli_autenticacion:
+		container_name: apiautetnitacion,php
+		build:
+		        context: . 
+		        dockerfile:dockerfile-prod
+		ports:
+		- 00:00
+		restar: always
+   	 volumes:
+   	 - /php:/var/www/html
+	    	networks:
+	    	nelnetwork:
+		ipv4_address: 172.128.20.3
+ apli_trafico:
+		container_name: apitransito,php
+		build:
+		        context: . 
+		        dockerfile:dockerfile-prod
+		ports:
+		- 00:00
+		restar: always
+   	 volumes:
+   	 - /php:/var/www/html
+	    	networks:
+	    	nelnetwork:
+		ipv4_address: 172.128.20.3
+ apli_backoffice:
+		container_name: backoffice_php
+		build:
+		        context: . 
+		        dockerfile:dockerfile-prod
+		ports:
+		- 00:00
+		restar: always
+   	 volumes:
+   	 - /php:/var/www/html
+	    	networks:
+	    	nelnetwork:
+		ipv4_address: 172.128.20.3
+ apli_almacen:
+		container_name: apialmacen_php
+		build:
+		        context: . 
+		        dockerfile:dockerfile-prod
+		ports:
+		- 00:00
+		restar: always
+   	 volumes:
+   	 - /php:/var/www/html
+	    	networks:
+	    	nelnetwork:
+		ipv4_address: 172.128.20.3

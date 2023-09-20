@@ -1,0 +1,17 @@
+
+- name: InstalPaquetes
+  hosts: NelServer
+  become: no
+
+  tasks:
+    - name: Act_Paquetes
+      ansible.builtin.yum:
+        update_cache: yes  
+
+    - name: Instalar_Paquetes
+      ansible.builtin.yum:
+        name:
+          - 
+          - 
+          -
+        state: present  
