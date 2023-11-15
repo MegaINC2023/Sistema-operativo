@@ -1,44 +1,49 @@
 #!/bin/bash
-mostrar_login_exitoso() {
-    echo "Registros de inicio de sesión exitosos:"
-    grep "Accepted" /var/log/auth.log
-}
-mostrar_login_fallido() {
-    echo "Registros de inicio de sesión fallidos:"
-    grep "Failed" /var/log/auth.log
-}
-mostrar_todos_los_logs() {
-    echo "Todos los registros de inicio de sesión:"
-    cat /var/log/auth.log
-}
-menu_principal() {
-    while true; do
-        echo "Seleccione una opción:"
-        echo "1. Mostrar registros de inicio de sesión exitosos"
-        echo "2. Mostrar registros de inicio de sesión fallidos"
-        echo "3. Mostrar todos los registros de inicio de sesión"
-        echo "4. Salir"
 
-        read opcion
+opc=0
 
-        case $opcion in
-            1)
-                mostrar_login_exitoso
-                ;;
-            2)
-                mostrar_login_fallido
-                ;;
-            3)
-                mostrar_todos_los_logs
-                ;;
-            4)
-                exit 0
-                ;;
-            *)
-                echo "Opción no válida. Inténtelo de nuevo."
-                ;;
+while [[ $opc -ne 6 ]]; do
+        clear
+        echo ------Gestión de Logs--------
+        echo [1] Ultimo arranque.
+        echo [2] Lista de arranques.
+        echo [3] Ultimo inicio de sesión.
+        echo [4] Conexiones mediante SSH.
+        echo [5] Conexiones fallidas.
+        echo [6] Volver atras.
+        echo -----------------------------
+        echo
+        read -p "Seleccione una opción: " opc
+
+        case $opc in
+                1)clear
+                        echo Mostrando información del arranque del ultimo arranque...
+                        journalctl -b -1
+                        read -p "Ingrese un boton para continuar: " boton
+                        ;;
+                2)clear
+                        journalctl --list-boot
+                        read -p "Ingrese un boton para continuar: " boton
+                        ;;
+                3)clear
+                        echo -e "\e[1m-- Últimos inicios de sesión --\e[0m"
+                        lastlog --user 0 && lastlog --user 1000- | egrep -v "Username\s*Port"
+                        read -p "Ingrese un boton para continuar: " boton
+                        ;;
+                4)clear
+                        echo -e "\e[1m-- Conexiones SSH --\e[0m"
+                        journalctl -t sshd --grep="(:?session opened)|(:?Accepted password)"
+                        read -p "Ingrese un boton para continuar: " boton
+                        ;;
+                5)clear
+                        journalctl --unit=sshd.service --grep="(:?authentication failure)|(:?Failed password)"
+                        #journalctl --unit=sshd.service | egrep --color=always -i "(:?authentication failure)|(:?Failed password)" | less -r
+                        read -p "Ingrese un boton para continuar: " boton
+                        ;;
+                6)clear
+                        ;;
+                *)
+                        echo "Opción inválida"
+                        ;;
         esac
-    done
-}
-
-menu_principal
+done

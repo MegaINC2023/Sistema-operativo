@@ -1,0 +1,37 @@
+services:
+  web-app:
+    build:
+      context: ./php-apache
+      dockerfile: Dockerfile
+    container_name: contenedor-apache-php
+    links:
+      - db
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - "8080:80"
+    environment:
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  db:
+    container_name: contenedor-mysql
+    #image: mysql:latest
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    #deprecated: mysql_native_password
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: sisgran
+    volumes:
+      - ./mysql/initdb:/docker-entrypoint-initdb.d
+      #- ./mysql/data:/var/lib/mysql
+      #- ./mysql/logs:/var/log/mysql
+    ports:
+      - "3306:3306"
